@@ -1,0 +1,9 @@
+GET   /activities     returns all activities
+PUT   /activity/<id>  updates an activity
+POST  /activity       creates a new activity
+DEL   /activity/<id>  deletes an activity
+
+GET   /projects       returns all projects
+PUT   /project/<id>   updates a project
+POST  /project        creates a new project
+DEL   /project/<id>   deletes a project

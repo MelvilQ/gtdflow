@@ -1,0 +1,93 @@
+body {
+    font-family: 'Roboto Condensed';
+    font-size: 16px;
+}
+
+.glyphicon {
+    font-size: 24px;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.jumbotron {
+    background-image: url(/static/bg.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+}
+
+.login_box {
+    width: 200px;
+    margin: 0 auto;
+}
+
+.loading_box {
+    width: 100px;
+    margin: 0 auto;
+}
+
+.offline_box {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.delete-icon {
+    position: relative;
+    float: right;
+}
+
+.toggle {
+    font-size: 20pt;
+}
+
+a:hover {
+    cursor:pointer;
+}
+
+.done {
+    text-decoration: line-through;
+}
+
+.inactive {
+    color: grey;
+    font-style: italic;
+}
+
+.hot {
+    color: #337AB7;
+    font-weight: bold;
+}
+
+.urgent {
+    color: red;
+    font-weight: bold;
+}
+
+table {
+    padding: 10px;
+}
+
+td {
+    padding: 5px;
+}
+
+.text-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: green;
+    padding: 0;
+    margin: 0;
+}
+
+.datepicker-input {
+    width: 150px;
+}
+
+.activitytext {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

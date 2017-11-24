@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <title>gtdflow</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="white">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/app.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
+</head>
+
+<body>
+    <!-- top image -->
+    <div class="jumbotron"></div>
+
+    <!-- app container -->
+    <div v-cloak id="vue-container" class="container">
+
+        <div v-if="!loggedIn" class="row"><div class="col-md-12">
+            <!-- login form -->
+            <form @submit.prevent="login" class="login_box">
+                <p>Username:<br><input type="text" v-model="username" name="username"></p>
+                <p>Password:<br><input type="password" v-model="password" name="password"></p>
+                <button type="submit" class="btn btn-primary">Log In</button>
+                <p v-show="loginFailed" class="urgent">Login was unsuccessful...</p> 
+            </form>
+        </div></div>
+
+        <div v-else-if="loadingData" class="row"><div class="col-md-12">
+            <div class="loading_box">Loading...</div>
+        </div></div>
+
+        <div v-else-if="offlineMode" class="row"><div class="col-md-12">
+            <div class="offline_box">You're offline, please check your internet connection.</div>
+        </div></div>
+        
+        <div v-else class="row">
+
+            <!-- list of activities -->
+            <div id="activities-container" class="col-md-9">
+                <!-- filter bar -->
+                <p class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" 
+                            :class="{'btn-primary': filter === 'all'}"
+                            @click="setFilter('all')">
+                        Show All
+                    </button>
+                    <button type="button" class="btn btn-default" 
+                            :class="{'btn-primary': filter === 'inactive'}"
+                            @click="setFilter('inactive')">
+                        Undone
+                    </button>
+                    <button type="button" class="btn btn-default" 
+                            :class="{'btn-primary': filter === 'active'}"
+                            @click="setFilter('active')">
+                        Only Active
+                    </button>
+                    <button type="button" class="btn btn-default" 
+                            :class="{'btn-primary': filter === 'hot'}"
+                            @click="setFilter('hot')">
+                        Only Hot
+                    </button>
+                </p>
+                <p v-show="visibleActivities.length === 0">No displayable activities.</p>
+                <!-- activities table -->
+                <table class="table table-striped">
+                    <tr v-for="a in visibleActivities"><td><div class="row">
+                        <!-- activity text -->
+                        <div class="col-md-8 activitytext">
+                            <span v-show="!a.textEditing" 
+                                  @click="editActivityText(a)"
+                                  :class="{hot: a.status === 'HOT', done: a.status === 'DONE', inactive: a.status === 'INACTIVE', urgent: !(a.dateDue === null || a.status === 'DONE')}">
+                                {{a.text}}
+                            </span>
+                            <input v-show="a.textEditing" type="text" class="text-input" :ref="'text' + a.id"
+                                   v-model="a.textInput" @blur="setText(a)" @keyup.enter="setText(a)"
+                                   v-focus>
+                        </div>
+                        <div class="col-md-4">
+                            <!-- go to project -->
+                            <a v-show="selectedProject === -1" @click="selectProject(a.project)" title="Go to Project">
+                                <span class="glyphicon glyphicon-folder-close"></span>
+                            </a>
+                            <!-- set hot -->
+                            <a v-show="a.status === 'ACTIVE' || a.status === 'INACTIVE'" @click="setHot(a)" title="Set Hot">
+                                <span class="glyphicon glyphicon-flash"></span>
+                            </a>
+                            <!-- undo set hot -->
+                            <a v-show="a.status === 'HOT'" @click="setActive(a)" title="Set Active">
+                                <span class="glyphicon glyphicon-repeat"></span>
+                            </a>
+                            <!-- set inactive -->
+                            <a v-show="a.status === 'ACTIVE' || a.status === 'HOT'" @click="setInactive(a)" title="Set Inactive">
+                                <span class="glyphicon glyphicon-eye-close"></span>
+                            </a>
+                            <!-- undo set inactive -->
+                            <a v-show="a.status === 'INACTIVE'" @click="setActive(a)" title="Set Active">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </a>
+                            <!-- set done -->
+                            <a v-show="a.status !== 'DONE'" @click="setDone(a)" title="Set Done">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </a>
+                            <!-- undo set done -->
+                            <a v-show="a.status === 'DONE'" @click="setActive(a)" title="Set Active">
+                                <span class="glyphicon glyphicon-repeat"></span>
+                            </a>
+                            <a @click="deleteActivity(a)" title="Delete">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                            <!-- set due date -->
+                            <br v-show="a.dateDue || a.dateDueEditing">
+                            <a v-show="a.status !== 'DONE'" @click="activateDueDate(a)">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </a>
+                            <input type="date" v-show="a.dateDueEditing" v-model="a.dateDueInput" class="datepicker-input">
+                            <a v-show="moment(a.dateDueInput, 'YYYY-MM-DD').isValid()" @click="setDueDate(a)">
+                                <span class="glyphicon glyphicon-arrow-right"></span>
+                            </a>
+                            <span v-show="a.dateDue">{{moment(a.dateDue).format('D.M.YYYY')}}</span>
+                            <a v-show="a.dateDue || a.dateDueEditing" @click="clearDueDate(a)">
+                                <span class="glyphicon glyphicon-sunglasses"></span>
+                            </a>
+                            <!-- show done date for done tasks -->
+                            <span v-show="a.status === 'DONE'">{{moment(a.dateMarkedDone).format('D.M.YYYY')}}</span>
+                        </div>
+                    </div></td></tr>
+                </table>
+
+                <form @submit.prevent="addActivity">
+                    <input type="text" v-model="newActivityText">
+                    <button type="submit" :disabled="addingActivity" class="btn btn-primary">
+                        Add Activity
+                    </button>
+                </form>
+            </div>
+
+            <!-- list of projects -->
+            <div id="projects-container" class="col-md-3">
+                <br>
+                <ul class="nav nav-pills nav-stacked">
+                    <li :class="{active: selectedProject === -1}">
+                        <a @click="selectProject(-1)">All Projects</a>
+                    </li>
+                    <li v-for="p in projects" :class="{active: selectedProject === p.id}">
+                        <a @click="selectProject(p.id)">
+                            {{p.name}}
+                            <span @click="deleteProject(p)" class="glyphicon glyphicon-trash delete-icon"></span>
+                        </a>
+                    </li>
+                </ul>
+                <br>
+                <form @submit.prevent="addProject">
+                    <input type="text" v-model="newProjectName" />
+                    <button type="submit" :disabled="addingProject" class="btn btn-primary">Add</button>
+                </form>
+                <br><br>
+                <button @click="logout" class="btn btn-default">Log Out</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="/static/lib/jquery.min.js"></script>
+    <script src="/static/lib/bootstrap.min.js"></script>
+    <script src="/static/lib/vue.min.js"></script>
+    <script src="/static/lib/axios.min.js"></script>
+    <script src="/static/lib/moment.min.js"></script>
+    <script src="/static/lib/js.cookie.min.js"></script>
+    <script src="/static/lib/navigo.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

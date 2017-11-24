@@ -1,0 +1,7 @@
+DB_SERVER = 'xxxxxxx'
+DB_USER = 'xxxxxxx'
+DB_PASS = 'xxxxxxx'
+DB_NAME = 'xxxxxxx'
+APP_USER = 'xxxxxxx'
+APP_PASS = 'xxxxxxx'
+SECRET_KEY = 'xxxxxxx'

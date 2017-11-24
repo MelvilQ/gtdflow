@@ -1,0 +1,30 @@
+{
+    "name": "gtdflow",
+    "short_name": "gtdflow",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/static/icon-128.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/static/icon-144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "/static/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/static/icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "background_color": "#337AB7",
+    "theme_color": "#337AB7",
+    "display": "standalone"
+}
