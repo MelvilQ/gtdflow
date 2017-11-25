@@ -85,6 +85,10 @@ var app = new Vue({
                     a.dateDueInput = null;
                 });
                 this.activities = activities.data;
+                projects.data.forEach((p) => {
+                    p.nameEditing = false;
+                    p.nameInput = null;
+                });
                 this.projects = projects.data;
                 this.filterActivities();
             }))
@@ -113,6 +117,7 @@ var app = new Vue({
                 this.addingProject = false;
                 project.id = response.data;
                 project.nameEditing = false;
+                project.nameInput = null;
                 this.projects.push(project);
                 this.newProjectName = '';
                 this.selectProject(project.id);
@@ -121,6 +126,17 @@ var app = new Vue({
                 this.addingProject = false;
                 console.log(error);
             });
+        },
+        editProjectName: function(p){
+            p.nameEditing = true;
+            p.nameInput = p.name;
+        },
+        setName: function(p){
+            p.nameEditing = false;
+            if(p.nameInput.trim() && p.name !== p.nameInput.trim()){
+                p.name = p.nameInput.trim();
+                this.updateProject(p);
+            }
         },
         updateProject: function(p){
             axios.put('/api/project/' + p.id, p)
@@ -208,8 +224,8 @@ var app = new Vue({
         },
         setText: function(a){
             a.textEditing = false;
-            if(a.textInput){
-                a.text = a.textInput;
+            if(a.textInput.trim() && a.text !== a.textInput.trim()){
+                a.text = a.textInput.trim();
                 this.updateActivity(a);
             }
         },

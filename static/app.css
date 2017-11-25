@@ -83,6 +83,15 @@ td {
     margin: 0;
 }
 
+.name-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: green;
+    padding: 0;
+    margin: 0;
+}
+
 .datepicker-input {
     width: 150px;
 }

@@ -76,7 +76,7 @@
                                   :class="{hot: a.status === 'HOT', done: a.status === 'DONE', inactive: a.status === 'INACTIVE', urgent: !(a.dateDue === null || a.status === 'DONE')}">
                                 {{a.text}}
                             </span>
-                            <input v-show="a.textEditing" type="text" class="text-input" :ref="'text' + a.id"
+                            <input v-show="a.textEditing" type="text" class="text-input"
                                    v-model="a.textInput" @blur="setText(a)" @keyup.enter="setText(a)"
                                    v-focus>
                         </div>
@@ -155,7 +155,9 @@
                         v-if="!p.hidden || showHiddenProjects"
                         :class="{active: selectedProject === p.id}">
                         <a @click="selectProject(p.id)">
-                            {{p.name}}
+                            <span v-show="!p.nameEditing">{{p.name}}</span>
+                            <input v-show="p.nameEditing" type="text" class="name-input" v-model="p.nameInput"
+                                   @blur="setName(p)" @keyup.enter="setName(p)" @click.stop="" v-focus>
                             <span @click.stop="deleteProject(p)" title="Delete Project"
                                   class="glyphicon glyphicon-trash project-icon"></span>
                             <span @click.stop="hideProject(p)" v-if="!p.hidden" title="Hide Project"
