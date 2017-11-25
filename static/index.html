@@ -70,7 +70,7 @@
                 <table class="table table-striped">
                     <tr v-for="a in visibleActivities"><td><div class="row">
                         <!-- activity text -->
-                        <div class="col-md-8 activitytext">
+                        <div class="col-md-8 activity-line">
                             <span v-show="!a.textEditing" 
                                   @click="editActivityText(a)"
                                   :class="{hot: a.status === 'HOT', done: a.status === 'DONE', inactive: a.status === 'INACTIVE', urgent: !(a.dateDue === null || a.status === 'DONE')}">
@@ -80,7 +80,7 @@
                                    v-model="a.textInput" @blur="setText(a)" @keyup.enter="setText(a)"
                                    v-focus>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 activity-line">
                             <!-- go to project -->
                             <a v-show="selectedProject === -1" @click="selectProject(a.project)" title="Go to Project">
                                 <span class="glyphicon glyphicon-folder-close"></span>
