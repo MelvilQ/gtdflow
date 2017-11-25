@@ -22,11 +22,15 @@ Mobile
 
 Installation
 -------
-1. Set up a Python 3 environment with Flask, SSLify, and MySQLdb. 
-2. Set up a MySQL database and apply [the schema](db/schema.sql). Copy [the config template](/config.py.template) using values that fit for your setup.
-3. Start the app using the [start script](start) (run `./start` in the command line).
+1. Clone this repo. 
+1. Set up a Python 3 environment with Flask, SSLify, and MySQLdb.
+1. Set up a MySQL database and apply [the schema](db/schema.sql). 
+1. Copy [the config template](/config.py.template), name it `config.py` and set values that fit for your setup.
+1. Start the app using the [start script](start) (run `./start` in the command line).
 
 I recommend [PythonAnywhere](https://www.pythonanywhere.com/) to run Python web apps in the cloud, they have a free plan allowing you to run one app under a subdomain with free SSL and a limited MySQL database.
+
+Once the Flask app is running, you can access it with a browser like a normal web page, or install it on your homescreen.
 
 API
 -------
