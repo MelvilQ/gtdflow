@@ -10,6 +10,7 @@ var app = new Vue({
         visibleActivities: [],
         projects: [],
         selectedProject: -1,
+        showHiddenProjects: false,
         filter: 'hot',
         newActivityText: '',
         newProjectName: '',
@@ -93,12 +94,16 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        displayHiddenProjects: function(){
+            this.showHiddenProjects = true;
+        },
         selectProject: function(projectId){
             this.router.navigate('/' + projectId + '/' + this.filter);
         },
         addProject: function(){
             var project = {
-                name: this.newProjectName.trim()
+                name: this.newProjectName.trim(),
+                hidden: false
             };
             if(project.name.length === 0)
                 return;
@@ -107,6 +112,7 @@ var app = new Vue({
             .then((response) => {
                 this.addingProject = false;
                 project.id = response.data;
+                project.nameEditing = false;
                 this.projects.push(project);
                 this.newProjectName = '';
                 this.selectProject(project.id);
@@ -116,8 +122,21 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        updateProject: function(p){
+            axios.put('/api/project/' + p.id, p)
+            .then((response) => console.log('updated project ' + p.id))
+            .catch((error) => console.log(error));
+        },
+        hideProject: function(p){
+            p.hidden = true;
+            this.updateProject(p);
+        },
+        unhideProject: function(p){
+            p.hidden = false;
+            this.updateProject(p);
+        },
         deleteProject: function(p){
-            axios.delete('api/project/' + p.id)
+            axios.delete('/api/project/' + p.id)
             .then((response) => {
                 var i = this.projects.indexOf(p);
                 this.projects.splice(i, 1);

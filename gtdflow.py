@@ -117,8 +117,8 @@ def getProjects():
 @app.route('/api/project', methods=['POST'])
 def newProject():
     project = request.get_json(force=True)
-    values = (str(project["name"]),)
-    success = db.execute('INSERT INTO projects (name) VALUES (%s)', values)
+    values = (str(project["name"]), int(project["hidden"]))
+    success = db.execute('INSERT INTO projects (name, hidden) VALUES (%s,%s)', values)
     if success == 1:
         return jsonify(db.lastrowid)
     else:
@@ -130,6 +130,8 @@ def modifyProject(id):
     for (key,value) in project.items():
         if key == 'name':
             db.execute('UPDATE projects SET name=%s WHERE id=%s', (value, id))
+        if key == 'hidden':
+            db.execute('UPDATE projects SET hidden=%s WHERE id=%s', (value, id))
     return ('', 204)
 
 @app.route('/api/project/<int:id>', methods=['DELETE'])

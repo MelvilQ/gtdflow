@@ -3,7 +3,8 @@ drop table if exists activities;
 
 create table projects(
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    name VARCHAR(1024)
+    name VARCHAR(1024),
+    hidden TINYINT
 );
 
 create table activities(

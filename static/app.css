@@ -33,9 +33,9 @@ body {
     margin: 0 auto;
 }
 
-.delete-icon {
-    position: relative;
+.project-icon {
     float: right;
+    padding-left: 3px;
 }
 
 .toggle {

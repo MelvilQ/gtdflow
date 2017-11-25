@@ -114,7 +114,7 @@
                             </a>
                             <!-- set due date -->
                             <br v-show="a.dateDue || a.dateDueEditing">
-                            <a v-show="a.status !== 'DONE'" @click="activateDueDate(a)">
+                            <a v-show="a.status !== 'DONE'" @click="activateDueDate(a)" title="Set Due Date">
                                 <span class="glyphicon glyphicon-time"></span>
                             </a>
                             <input type="date" v-show="a.dateDueEditing" v-model="a.dateDueInput" class="datepicker-input">
@@ -144,12 +144,26 @@
                 <br>
                 <ul class="nav nav-pills nav-stacked">
                     <li :class="{active: selectedProject === -1}">
-                        <a @click="selectProject(-1)">All Projects</a>
+                        <a @click="selectProject(-1)">
+                            All Projects
+                            <span @click.stop="displayHiddenProjects" title="Show Hidden Projects"
+                                  v-if="!showHiddenProjects" 
+                                  class="glyphicon glyphicon-eye-open project-icon"></span>
+                        </a>
                     </li>
-                    <li v-for="p in projects" :class="{active: selectedProject === p.id}">
+                    <li v-for="p in projects" 
+                        v-if="!p.hidden || showHiddenProjects"
+                        :class="{active: selectedProject === p.id}">
                         <a @click="selectProject(p.id)">
                             {{p.name}}
-                            <span @click="deleteProject(p)" class="glyphicon glyphicon-trash delete-icon"></span>
+                            <span @click.stop="deleteProject(p)" title="Delete Project"
+                                  class="glyphicon glyphicon-trash project-icon"></span>
+                            <span @click.stop="hideProject(p)" v-if="!p.hidden" title="Hide Project"
+                                  class="glyphicon glyphicon-eye-close project-icon"></span>
+                            <span @click.stop="unhideProject(p)" v-else title="Un-Hide Project"
+                                  class="glyphicon glyphicon-eye-open project-icon"></span>
+                            <span @click.stop="editProjectName(p)" v-if="!p.nameEditing" title="Rename Project"
+                                  class="glyphicon glyphicon-pencil project-icon"></span>
                         </a>
                     </li>
                 </ul>
@@ -157,7 +171,7 @@
                 <form @submit.prevent="addProject">
                     <input type="text" v-model="newProjectName" />
                     <button type="submit" :disabled="addingProject" class="btn btn-primary">Add</button>
-                </form>
+                </form>            
                 <br><br>
                 <button @click="logout" class="btn btn-default">Log Out</button>
             </div>
