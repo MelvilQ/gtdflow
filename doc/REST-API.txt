@@ -1,3 +1,6 @@
+POST  /login		  log in
+POST  /logout		  log out
+
 GET   /activities     returns all activities
 PUT   /activity/<id>  updates an activity
 POST  /activity       creates a new activity
